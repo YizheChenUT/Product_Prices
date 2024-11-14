@@ -1,15 +1,16 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Product Price Analysis Using Observational Data"
+subtitle: "Analysis of Price Trends, Minimal Correlation with Unit Pricing, and Potential Data Biases"
 author: 
-  - First author
+  - Yizhe Chen
   - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+thanks: "Code and data are available at: [https://github.com/YizheChenUT/Product_Prices.git](https://github.com/YizheChenUT/Product_Prices.git)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This report provides an analysis of observational product price data, focusing on current price statistics, price changes, and the weak correlation observed between current price and unit price. The findings indicate that there is minimal linear relationship between these two variables, suggesting that other factors may play a more substantial role in determining product prices. In the discussion, we address the implications of this weak correlation, the impact of missing data on price change calculations, and potential sources of bias that could influence the analysis."
 format: pdf
 number-sections: true
+toc: true
 bibliography: references.bib
 ---
 
@@ -19,237 +20,111 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+
+
 ```
 
 
 # Introduction
 
-Overview paragraph
+This report presents an analysis of product price data obtained from the hammer-2-processed.sqlite database. The primary objective of this analysis is to explore price trends, calculate price changes over time, and examine the potential correlation between current price and price per unit. The results show a very weak negative correlation between these two variables, indicating that changes in price per unit have little to no linear relationship with current price. This observational data, sourced from multiple vendors, provides insights into pricing behavior but also presents challenges, such as missing data and potential sources of bias, which could impact the reliability of the findings.
 
-Estimand paragraph
-
-Results paragraph
-
-Why it matters paragraph
-
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
-
+The remainder of this report is structured as follows. @sec-data provides an overview of the data and details the measurement and calculation of key variables. @sec-results presents the main findings. Finally, @sec-discussion discusses key issues in the analysis, including correlation vs. causation, missing data, and sources of bias.
 
 # Data {#sec-data}
 
 ## Overview
 
-We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
-
-Overview text
+The dataset used in this analysis includes key columns such as current price, old price, and price per unit. These columns allow us to calculate basic statistics on product pricing, examine price changes over time, and investigate any potential relationship between unit pricing and overall price. The data was collected from various vendors, providing a range of pricing practices and helping to create a comprehensive view of pricing strategies.
 
 ## Measurement
-	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
 
-## Outcome variables
+Key variables in this analysis include:
 
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
+- `current_price`: The most recent recorded price of the product.
 
+- `old_price`: The previous price recorded for each product, which is used to calculate the percentage change in price over time.
 
+- `price_per_unit`: The unit price of each product, which could theoretically be associated with the overall current price.
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+The dataset was filtered and cleaned to remove missing or invalid entries, particularly in the current price and old price columns, to ensure data integrity. This cleaning process included handling missing values and standardizing units where necessary, allowing for a more accurate and meaningful analysis of price trends and correlations.
 
-```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
+# Results {#sec-results}
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
+## Basic Statistics
 
-Talk more about it.
+@tbl-basic-stats presents basic statistics on `current price` and `old price`.
 
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
-
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
-
-Talk way more about it. 
-
-## Predictor variables
-
-Add graphs, tables and text.
-
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
-
-
-
-
-
-
-
-
-# Model
-
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
-
-## Model set-up
-
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
-
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
-
-
-### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
-
-# Results
-
-Our results are summarized in @tbl-modelresults.
 
 ```{r}
 #| echo: false
 #| eval: true
 #| warning: false
 #| message: false
+#| label: tbl-basic-stats
+#| tbl-cap: "Basic statistics of current and old prices"
+# Read data
+basic_stats <- read.csv(here::here("data/02-analysis_data/result_analysis1.csv"))
 
-library(rstanarm)
+# Display of basic statistical data tables
+knitr::kable(basic_stats)
 
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
 ```
+
+## Price Change Analysis
+
+@fig-price-change shows the percentage change in price for each product where `old price` is available.
 
 ```{r}
 #| echo: false
 #| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
 #| warning: false
-
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
-```
-
-
-
-
-# Discussion
-
-## First discussion point {#sec-first-point}
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-Please don't use these as sub-heading labels - change them to be what your point actually is.
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
-
-\newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-```{r}
-#| eval: true
-#| echo: false
 #| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+#| label: fig-price-change
+#| fig-cap: "Line Plot of Price Change Percentage by Product ID"
 
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
+# Read data on price change in per cent
+price_change <- read.csv(here::here("data/02-analysis_data/result_analysis2.csv"))
 
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
+ggplot(price_change, aes(x = product_id, y = price_change_percentage)) +
+  geom_line(color = "blue") +
+  labs(x = "Product ID", y = "Price Change Percentage") +
+  theme_minimal()
 ```
 
-## Diagnostics
+## Correlation Analysis
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+The correlation between current price and price per unit is approximately -0.03256. This indicates a very weak negative correlation, suggesting that there is almost no linear relationship between the current price of the products and the price per unit. In other words, changes in current price are not significantly associated with changes in price per unit based on this observational data.
 
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
-
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
-```
+This weak correlation highlights that while price per unit might theoretically influence current price, other factors could play a more substantial role in determining the product's pricing.
 
 
+
+# Discussion {#sec-discussion}
+
+## Correlation vs. Causation
+
+The correlation analysis between current price and price per unit yielded a very weak negative correlation of approximately -0.03256. This value indicates an almost negligible linear relationship between these two variables, suggesting that fluctuations in current price do not strongly align with changes in price per unit. While this finding might imply that price per unit does not have a significant impact on the current price, it is important to remember that correlation does not imply causation. External factors, such as brand reputation, product demand, or vendor pricing strategies, could play a more substantial role in determining prices. Thus, we cannot conclude that changes in price per unit would directly cause any notable change in current price.
+
+## Missing Data
+
+The dataset includes missing values, particularly in the old price column. These missing data points could potentially skew the analysis by reducing the sample size for certain calculations, such as price change percentage. Missing old price values might indicate discontinued products or errors during data collection. This gap in the data could affect the accuracy of the price change analysis and may introduce bias, as it might lead to an underrepresentation of certain types of products.
+
+## Sources of Bias
+
+Several potential sources of bias in this observational dataset could affect the analysis:
+
+- Selection Bias: The data might over-represent specific vendors or product categories, potentially skewing the findings. For instance, if one vendor has more products listed than others, this could influence the overall average prices or price trends.
+
+- Temporal Bias: Prices fluctuate over time due to factors like seasonal demand, promotions, and economic conditions. Since this dataset represents observational data from specific points in time, it may not accurately capture the longer-term trends or seasonality.
+
+- Measurement Bias: Variability in how vendors report price per unit or current price could lead to inconsistencies. For example, some vendors may round prices or calculate price per unit differently, leading to slight variations that are not reflective of actual market conditions. 
+
+# Conclusion
+
+This analysis provides insights into product pricing trends and variability within the dataset, but it also underscores the importance of context when interpreting observational data. The correlation analysis showed a very weak relationship between current price and price per unit, suggesting that other factors are likely more influential in determining product prices. Additionally, missing data and potential sources of bias—such as selection, temporal, and measurement biases—highlight the limitations inherent in this dataset.
+
+In conclusion, while the data offers valuable observations, these findings should be interpreted cautiously. Future analyses could benefit from a more comprehensive dataset that includes consistent reporting practices across vendors, longitudinal data to capture temporal trends, and efforts to minimize missing values. This would provide a more robust foundation for understanding the true determinants of product pricing.
 
 \newpage
 
