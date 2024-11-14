@@ -3,7 +3,8 @@ title: "Product Price Analysis Using Observational Data"
 subtitle: "Analysis of Price Trends, Minimal Correlation with Unit Pricing, and Potential Data Biases"
 author: 
   - Yizhe Chen
-  - Another author
+  - Bo Tang
+  - Qizhou Xie
 thanks: "Code and data are available at: [https://github.com/YizheChenUT/Product_Prices.git](https://github.com/YizheChenUT/Product_Prices.git)."
 date: today
 date-format: long
@@ -20,14 +21,14 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-
+library(kableExtra)
 
 ```
 
 
 # Introduction
 
-This report presents an analysis of product price data obtained from the hammer-2-processed.sqlite database. The primary objective of this analysis is to explore price trends, calculate price changes over time, and examine the potential correlation between current price and price per unit. The results show a very weak negative correlation between these two variables, indicating that changes in price per unit have little to no linear relationship with current price. This observational data, sourced from multiple vendors, provides insights into pricing behavior but also presents challenges, such as missing data and potential sources of bias, which could impact the reliability of the findings.
+This report presents an analysis of product price data obtained from the Project Hammer – Jacob Filipp [@filipp]. We use the Structured Query Language (SQL) [@sql] to process and analyze and apply the statistical programming language R [@citeR] to make tables and graphs. The primary objective of this analysis is to explore price trends, calculate price changes over time, and examine the potential correlation between current price and price per unit. The results show a very weak negative correlation between these two variables, indicating that changes in price per unit have little to no linear relationship with current price. This observational data, sourced from multiple vendors, provides insights into pricing behavior but also presents challenges, such as missing data and potential sources of bias, which could impact the reliability of the findings.
 
 The remainder of this report is structured as follows. @sec-data provides an overview of the data and details the measurement and calculation of key variables. @sec-results presents the main findings. Finally, @sec-discussion discusses key issues in the analysis, including correlation vs. causation, missing data, and sources of bias.
 
@@ -35,17 +36,17 @@ The remainder of this report is structured as follows. @sec-data provides an ove
 
 ## Overview
 
-The dataset used in this analysis includes key columns such as current price, old price, and price per unit. These columns allow us to calculate basic statistics on product pricing, examine price changes over time, and investigate any potential relationship between unit pricing and overall price. The data was collected from various vendors, providing a range of pricing practices and helping to create a comprehensive view of pricing strategies.
+The dataset used in this analysis from the Project Hammer – Jacob Filipp [@filipp] includes key columns such as current price, old price, and price per unit. These columns allow us to calculate basic statistics on product pricing, examine price changes over time, and investigate any potential relationship between unit pricing and overall price. The data was collected from various vendors, providing a range of pricing practices and helping to create a comprehensive view of pricing strategies.
 
 ## Measurement
 
 Key variables in this analysis include:
 
-- `current_price`: The most recent recorded price of the product.
+- current price(current_price): The most recent recorded price of the product.
 
-- `old_price`: The previous price recorded for each product, which is used to calculate the percentage change in price over time.
+- old price(old_price): The previous price recorded for each product, which is used to calculate the percentage change in price over time.
 
-- `price_per_unit`: The unit price of each product, which could theoretically be associated with the overall current price.
+- price per unit(price_per_unit): The unit price of each product, which could theoretically be associated with the overall current price.
 
 The dataset was filtered and cleaned to remove missing or invalid entries, particularly in the current price and old price columns, to ensure data integrity. This cleaning process included handling missing values and standardizing units where necessary, allowing for a more accurate and meaningful analysis of price trends and correlations.
 
@@ -64,16 +65,23 @@ The dataset was filtered and cleaned to remove missing or invalid entries, parti
 #| label: tbl-basic-stats
 #| tbl-cap: "Basic statistics of current and old prices"
 # Read data
-basic_stats <- read.csv(here::here("data/02-analysis_data/result_analysis1.csv"))
+basic_stats <- read.csv(here::here("data/01-analysis_data/result_analysis1.csv"))
+
+# Shortening of column headings
+colnames(basic_stats) <- c("Avg Curr Price", "Max Curr Price", "Min Curr Price",
+                           "Avg Old Price", "Max Old Price", "Min Old Price",
+                           "Avg Price Diff", "Max Price Diff", "Min Price Diff")
 
 # Display of basic statistical data tables
-knitr::kable(basic_stats)
+basic_stats %>%
+  kable("latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 4.5, full_width = FALSE, position = "center")
 
 ```
 
 ## Price Change Analysis
 
-@fig-price-change shows the percentage change in price for each product where `old price` is available.
+@fig-price-change shows the percentage change in price for each product where `old price` is available. We use the tidyverse package [@tidyverse] to make the figure.
 
 ```{r}
 #| echo: false
@@ -84,7 +92,7 @@ knitr::kable(basic_stats)
 #| fig-cap: "Line Plot of Price Change Percentage by Product ID"
 
 # Read data on price change in per cent
-price_change <- read.csv(here::here("data/02-analysis_data/result_analysis2.csv"))
+price_change <- read.csv(here::here("data/01-analysis_data/result_analysis2.csv"))
 
 ggplot(price_change, aes(x = product_id, y = price_change_percentage)) +
   geom_line(color = "blue") +
