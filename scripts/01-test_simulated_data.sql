@@ -2,7 +2,7 @@
 # Purpose: Tests the structure and validity of the simulated data.
 # Author: Yizhe Chen
 # Date: 14 Nov 2024
-# Contact: .yz.chen@mail.utoronto.ca
+# Contact: yz.chen@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 00-simulate_data.sql must have been run
 # Any other information needed? No

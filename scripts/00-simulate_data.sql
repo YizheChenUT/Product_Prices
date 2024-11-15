@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Simulates a dataset of current price, including product id, base price and price variation
 # Author: Yizhe Chen
-# Date: 11 Nov 2024
+# Date: 14 Nov 2024
 # Contact: yz.chen@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: No
