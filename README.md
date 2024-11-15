@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository provides a structured approach for analyzing product price data using SQL and Quarto. The project includes data cleaning, simulation, and analysis of price trends, correlations, and biases based on observational data. This project is part of the coursework associated with *Telling Stories with Data*.
+This repository provides a structured approach for analyzing product price data using SQL and Quarto. The project includes data cleaning, simulation, and analysis of price trends, correlations, and biases based on observational data.
 
 
 ## File Structure
