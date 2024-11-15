@@ -54,7 +54,26 @@ The dataset was filtered and cleaned to remove missing or invalid entries, parti
 
 ## Basic Statistics
 
-@tbl-basic-stats presents basic statistics on `current price` and `old price`.
+@tbl-basic-stats presents basic statistics on current price and old price, as well as the calculated price difference between the two. These statistics provide an overview of the price distribution and variations observed within the dataset.
+
+- Avg Curr Price: The average current price of products, calculated as 6.76, indicating the typical price point in the latest records.
+
+- Max Curr Price: The maximum current price recorded, which is 479.99, showing the highest price among the products.
+
+- Min Curr Price: The minimum current price, observed as 0, suggesting there are items without a recorded price or products available for free.
+
+- Avg Old Price: The average old price, which is 8.51, slightly higher than the current average, indicating a general price reduction trend.
+
+- Max Old Price: The highest old price recorded, at 999.5, suggesting a significant price for certain items in the past.
+
+- Min Old Price: The minimum old price, also 0, reflecting products with no historical price or free items.
+
+- Avg Price Diff: The average price difference, calculated as -1.75, which indicates a minor overall decrease in prices over time.
+
+- Max Price Diff: The largest positive price difference of 77.06, showing the maximum price increase for a product.
+
+- Min Price Diff: The largest negative price difference of -979.53, representing a significant drop for some products.
+
 
 
 ```{r}
@@ -81,7 +100,9 @@ basic_stats %>%
 
 ## Price Change Analysis
 
-@fig-price-change shows the percentage change in price for each product where `old price` is available. We use the tidyverse package [@tidyverse] to make the figure.
+@fig-price-change shows the percentage change in price for each product where an old price is available. The figure was generated using the tidyverse package [@tidyverse] in R, which allowed for clear visualization of price change patterns across a large number of products. This line plot illustrates the degree of price variation across different products, with each point on the x-axis representing a unique Product ID and the y-axis representing the corresponding Price Change Percentage.
+
+In the plot, most products show minimal or moderate price changes, while a few products exhibit significant spikes, with some price changes exceeding 2000%. These extreme values may indicate unique circumstances, such as product re-pricing or error corrections. This variability highlights the potential influence of vendor pricing strategies, product demand fluctuations, or seasonal adjustments.
 
 ```{r}
 #| echo: false
@@ -105,7 +126,6 @@ ggplot(price_change, aes(x = product_id, y = price_change_percentage)) +
 The correlation between current price and price per unit is approximately -0.03256. This indicates a very weak negative correlation, suggesting that there is almost no linear relationship between the current price of the products and the price per unit. In other words, changes in current price are not significantly associated with changes in price per unit based on this observational data.
 
 This weak correlation highlights that while price per unit might theoretically influence current price, other factors could play a more substantial role in determining the product's pricing.
-
 
 
 # Discussion {#sec-discussion}
